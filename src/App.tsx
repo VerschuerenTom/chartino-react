@@ -1,10 +1,10 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import './App.css';
-import { ChartLine, LineChart } from "chartino"
+import { ChartBrush, ChartLine, ChartZoomBrush, Domain, DomainLinker, LineChart } from "chartino"
 import { MouseTooltip, TooltipData } from 'chartino/dist/model/mouse-tooltip';
 import ReactDOMServer from 'react-dom/server';
-import { ChartBrush } from 'chartino/dist/model/chart-brush';
-import { DomainLinker } from 'chartino/dist/model/domain-linker';
+
+const domainLinker = new DomainLinker()
 
 
 function App() {
@@ -22,7 +22,6 @@ function App() {
     1673280000000: -2,   // September 10, 2023
   };
   
-
   const dataTwo = {
     1672502400000: -15, // September 1, 2023
     1672588800000: 8,   // September 2, 2023
@@ -36,22 +35,39 @@ function App() {
     1673280000000: 19,  // September 10, 2023
   };
 
+  const [hasHistory,setHasHistory] = useState<boolean>(false)
+  const [hasFuture, setHasFuture] = useState<boolean>(false)
+
+
+
+    domainLinker.subscribe((domain) => {
+      setHasHistory(domainLinker.hasDomainHistory())
+      setHasFuture(domainLinker.hasDomainFutures())
+    })
+
+
+
     useEffect(() => {
-      console.log("reedraw")
+      console.log("redraw")
       const lineChart: LineChart = new LineChart("chart");
       const chartLine: ChartLine = new ChartLine(dataOne);
       chartLine.color = "#FF0000"
       const chartLine2: ChartLine = new ChartLine(dataTwo);
       const tooltip = new MouseTooltip(getTooltipPresentation)
-      const brush = new ChartBrush(new DomainLinker())
+      const brush = new ChartBrush(domainLinker)
+      const zoomBrush = new ChartZoomBrush(domainLinker)
       tooltip.positionCallback = (x:number,y:number) => ({x: x +10, y: y +10})
       chartLine2.color = "#008000"
       lineChart
           .addChartLine(chartLine)
           .addChartLine(chartLine2)
           .setTooltip(tooltip)
-          .setBrush(brush)
+          .setZoom(zoomBrush)
           .draw()
+
+      const secondChart = new LineChart("chartTwo");
+      secondChart.addChartLine(chartLine).addChartLine(chartLine2);
+      secondChart.setBrush(brush).draw()
     },[dataOne, dataTwo])
 
     const getTooltipPresentation = (time: Date, tooltipData:TooltipData) =>{
@@ -60,16 +76,19 @@ function App() {
         {time.toString()}
       </p>)
       return test;
-
     }
+
+
 
 
   return (
     <>
-      <div id="chart" style={{height: "100vh"}}>
-
+      <div id="chart" style={{height: "40vh"}}>
       </div>
+      <div id="chartTwo" style={{height: "20vh"}}></div>
       <div id="tooltip-div-chart"></div>
+      <button onClick={() => domainLinker.popDomain()} disabled={!hasHistory}>UNDO</button>
+      <button onClick={() => domainLinker.unpopDomain()} disabled={!hasFuture}>REDO</button>
     </>
 
   );
