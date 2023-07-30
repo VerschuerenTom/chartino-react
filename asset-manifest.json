@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/chartino-test/static/css/main.073c9b0a.css",
+    "main.js": "/chartino-test/static/js/main.73c887df.js",
+    "static/js/787.a9c7d2a8.chunk.js": "/chartino-test/static/js/787.a9c7d2a8.chunk.js",
+    "index.html": "/chartino-test/index.html",
+    "main.073c9b0a.css.map": "/chartino-test/static/css/main.073c9b0a.css.map",
+    "main.73c887df.js.map": "/chartino-test/static/js/main.73c887df.js.map",
+    "787.a9c7d2a8.chunk.js.map": "/chartino-test/static/js/787.a9c7d2a8.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.073c9b0a.css",
+    "static/js/main.73c887df.js"
+  ]
+}
