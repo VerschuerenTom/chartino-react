@@ -39,8 +39,6 @@ function App() {
   const {hasHistory, hasFutures} = useDomainHistoryStatus(domainLinker)
 
     useEffect(() => {
-      console.log("redraw")
-
       const lineChart: LineChart = new LineChart("chart");
       const chartLine: ChartLine = new ChartLine(dataOne);
       chartLine.color = "#FF0000"
@@ -70,9 +68,6 @@ function App() {
       return test;
     }
 
-
-
-
   return (
     <>
       <div id="chart" style={{height: "40vh"}}>
@@ -82,7 +77,6 @@ function App() {
       <button onClick={() => domainLinker.popDomain()} disabled={!hasHistory}>UNDO</button>
       <button onClick={() => domainLinker.unpopDomain()} disabled={!hasFutures}>REDO</button>
     </>
-
   );
 }
 

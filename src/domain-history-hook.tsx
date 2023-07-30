@@ -11,7 +11,6 @@ export function useDomainHistoryStatus(domainLinker: DomainLinker) {
     }
 
     useEffect(() => {
-
       domainLinker.subscribe(subscriber)
       return () => {
         domainLinker.unsubscribe(subscriber)
