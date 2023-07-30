@@ -3,9 +3,10 @@ import './App.css';
 import { ChartBrush, ChartLine, ChartZoomBrush, Domain, DomainLinker, LineChart } from "chartino"
 import { MouseTooltip, TooltipData } from 'chartino/dist/model/mouse-tooltip';
 import ReactDOMServer from 'react-dom/server';
+import { useDomainHistoryStatus } from './domain-history-hook';
 
 const domainLinker = new DomainLinker()
-
+console.log("IN HERO")
 
 function App() {
 
@@ -35,17 +36,7 @@ function App() {
     1673280000000: 19,  // September 10, 2023
   };
 
-  const [hasHistory,setHasHistory] = useState<boolean>(false)
-  const [hasFuture, setHasFuture] = useState<boolean>(false)
-
-
-
-    domainLinker.subscribe((domain) => {
-      setHasHistory(domainLinker.hasDomainHistory())
-      setHasFuture(domainLinker.hasDomainFutures())
-    })
-
-
+  const {hasHistory, hasFutures} = useDomainHistoryStatus(domainLinker)
 
     useEffect(() => {
       console.log("redraw")
@@ -68,12 +59,12 @@ function App() {
       const secondChart = new LineChart("chartTwo");
       secondChart.addChartLine(chartLine).addChartLine(chartLine2);
       secondChart.setBrush(brush).draw()
-    },[dataOne, dataTwo])
+    },[])
 
     const getTooltipPresentation = (time: Date, tooltipData:TooltipData) =>{
       const test = ReactDOMServer.renderToString(
-      <p style={{backgroundColor: "black"}}>
-        {time.toString()}
+      <p style={{backgroundColor: "white", border: "solid black"}}>
+        {time.toString()}: {tooltipData[0].value}
       </p>)
       return test;
     }
@@ -86,9 +77,9 @@ function App() {
       <div id="chart" style={{height: "40vh"}}>
       </div>
       <div id="chartTwo" style={{height: "20vh"}}></div>
-      <div id="tooltip-div-chart"></div>
+      {/*<div id="tooltip-div-chart"></div>*/}
       <button onClick={() => domainLinker.popDomain()} disabled={!hasHistory}>UNDO</button>
-      <button onClick={() => domainLinker.unpopDomain()} disabled={!hasFuture}>REDO</button>
+      <button onClick={() => domainLinker.unpopDomain()} disabled={!hasFutures}>REDO</button>
     </>
 
   );
