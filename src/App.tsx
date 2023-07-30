@@ -5,7 +5,6 @@ import { MouseTooltip, TooltipData } from 'chartino/dist/model/mouse-tooltip';
 import ReactDOMServer from 'react-dom/server';
 import { useDomainHistoryStatus } from './domain-history-hook';
 
-const domainLinker = new DomainLinker()
 console.log("IN HERO")
 
 function App() {
@@ -36,10 +35,12 @@ function App() {
     1673280000000: 19,  // September 10, 2023
   };
 
+  const [domainLinker] = useState(() => new DomainLinker())
   const {hasHistory, hasFutures} = useDomainHistoryStatus(domainLinker)
 
     useEffect(() => {
       console.log("redraw")
+
       const lineChart: LineChart = new LineChart("chart");
       const chartLine: ChartLine = new ChartLine(dataOne);
       chartLine.color = "#FF0000"
