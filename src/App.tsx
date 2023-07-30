@@ -1,6 +1,11 @@
 import { useEffect, useRef } from 'react';
 import './App.css';
 import { ChartLine, LineChart } from "chartino"
+import { MouseTooltip, TooltipData } from 'chartino/dist/model/mouse-tooltip';
+import ReactDOMServer from 'react-dom/server';
+import { ChartBrush } from 'chartino/dist/model/chart-brush';
+import { DomainLinker } from 'chartino/dist/model/domain-linker';
+
 
 function App() {
 
@@ -32,15 +37,31 @@ function App() {
   };
 
     useEffect(() => {
+      console.log("reedraw")
       const lineChart: LineChart = new LineChart("chart");
       const chartLine: ChartLine = new ChartLine(dataOne);
       chartLine.color = "#FF0000"
       const chartLine2: ChartLine = new ChartLine(dataTwo);
+      const tooltip = new MouseTooltip(getTooltipPresentation)
+      const brush = new ChartBrush(new DomainLinker())
+      tooltip.positionCallback = (x:number,y:number) => ({x: x +10, y: y +10})
       chartLine2.color = "#008000"
-      lineChart.addChartLine(chartLine)
-      lineChart.addChartLine(chartLine2);
-      lineChart.draw()
+      lineChart
+          .addChartLine(chartLine)
+          .addChartLine(chartLine2)
+          .setTooltip(tooltip)
+          .setBrush(brush)
+          .draw()
     },[dataOne, dataTwo])
+
+    const getTooltipPresentation = (time: Date, tooltipData:TooltipData) =>{
+      const test = ReactDOMServer.renderToString(
+      <p style={{backgroundColor: "black"}}>
+        {time.toString()}
+      </p>)
+      return test;
+
+    }
 
 
   return (
@@ -48,6 +69,7 @@ function App() {
       <div id="chart" style={{height: "100vh"}}>
 
       </div>
+      <div id="tooltip-div-chart"></div>
     </>
 
   );
