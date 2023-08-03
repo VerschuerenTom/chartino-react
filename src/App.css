@@ -36,3 +36,19 @@
     transform: rotate(360deg);
   }
 }
+
+.zoomBrush rect.selection {
+  fill: rgb(196, 196, 196);
+  stroke: black;
+}
+
+.chartTwo-brush rect.overlay {
+}
+
+.chartTwo-brush rect.selection {
+  fill: white;
+  stroke: black;
+  fill-opacity: 0%;
+}
+
+

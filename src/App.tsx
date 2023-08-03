@@ -1,49 +1,57 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import './App.css';
-import { ChartBrush, ChartLine, ChartZoomBrush, Domain, DomainLinker, LineChart } from "chartino"
-import { MouseTooltip, TooltipData } from 'chartino/dist/model/mouse-tooltip';
-import ReactDOMServer from 'react-dom/server';
+import { ChartBrush, ChartLine, ChartZoomBrush, DEFAULT_TOOLTIP, DomainLinker, LineChart } from "chartino"
+import { TooltipData } from 'chartino/dist/model/tooltip';
 import { useDomainHistoryStatus } from './domain-history-hook';
 
-console.log("IN HERO")
+
 
 function App() {
 
-  const dataOne = {
-    1672502400000: 5,   // September 1, 2023
-    1672588800000: 10,  // September 2, 2023
-    1672675200000: 13,  // September 3, 2023
-    1672761600000: 9,   // September 4, 2023
-    1672848000000: 4,  // September 5, 2023
-    1672934400000: 4,  // September 6, 2023
-    1673020800000: 1,   // September 7, 2023
-    1673107200000: -4, // September 8, 2023
-    1673193600000: -6,  // September 9, 2023
-    1673280000000: -2,   // September 10, 2023
-  };
-  
-  const dataTwo = {
-    1672502400000: -15, // September 1, 2023
-    1672588800000: 8,   // September 2, 2023
-    1672675200000: 6,   // September 3, 2023
-    1672761600000: -7,  // September 4, 2023
-    1672848000000: 20,  // September 5, 2023
-    1672934400000: -12, // September 6, 2023
-    1673020800000: 4,   // September 7, 2023
-    1673107200000: 10,  // September 8, 2023
-    1673193600000: -18, // September 9, 2023
-    1673280000000: 19,  // September 10, 2023
-  };
+  const timestamps =[1672502400000,
+    1672588800000,
+    1672675200000,
+    1672761600000,
+    1672848000000,
+    1672934400000,
+    1673020800000,
+    1673107200000,
+    1673193600000,
+    1673280000000]
+
+    const values = [ 5,
+      50,
+      13,
+      9,
+      4,
+      20,
+      1,
+      -4,
+      -6,
+      -2]
+
+      const valuesTwo = [-1,
+        10,
+        6,
+        -7,
+        20,
+        -1,
+        4,
+        10,
+        -1,
+        19]
+
 
   const [domainLinker] = useState(() => new DomainLinker())
   const {hasHistory, hasFutures} = useDomainHistoryStatus(domainLinker)
 
     useEffect(() => {
       const lineChart: LineChart = new LineChart("chart");
-      const chartLine: ChartLine = new ChartLine(dataOne);
-      chartLine.color = "#FF0000"
-      const chartLine2: ChartLine = new ChartLine(dataTwo);
-      const tooltip = new MouseTooltip(getTooltipPresentation)
+      const chartLine: ChartLine = new ChartLine(timestamps,values);
+      chartLine.color = "#DDDDDD"
+      const chartLine2: ChartLine = new ChartLine(timestamps,valuesTwo);
+      chartLine2.isAutoScale = false;
+      const tooltip = DEFAULT_TOOLTIP
       const brush = new ChartBrush(domainLinker)
       const zoomBrush = new ChartZoomBrush(domainLinker)
       tooltip.positionCallback = (x:number,y:number) => ({x: x +10, y: y +10})
@@ -60,12 +68,13 @@ function App() {
       secondChart.setBrush(brush).draw()
     },[])
 
-    const getTooltipPresentation = (time: Date, tooltipData:TooltipData) =>{
-      const test = ReactDOMServer.renderToString(
+    const getTooltipPresentation = (time: number, tooltipData:TooltipData) =>{
+      return "<div></div>"
+      /*const test = ReactDOMServer.renderToString(
       <p style={{backgroundColor: "white", border: "solid black"}}>
-        {time.toString()}: {tooltipData[0].value}
+        {time}: {tooltipData[0].value}
       </p>)
-      return test;
+      return test; */
     }
 
   return (
