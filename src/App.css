@@ -43,11 +43,12 @@
 }
 
 .chartTwo-brush rect.overlay {
+  fill: transparent
 }
 
 .chartTwo-brush rect.selection {
   fill: white;
-  stroke: black;
+stroke: none;
   fill-opacity: 0%;
 }
 

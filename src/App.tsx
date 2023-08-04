@@ -3,6 +3,7 @@ import './App.css';
 import { ChartBrush, ChartLine, ChartZoomBrush, DEFAULT_TOOLTIP, DomainLinker, LineChart } from "chartino"
 import { TooltipData } from 'chartino/dist/model/tooltip';
 import { useDomainHistoryStatus } from './domain-history-hook';
+import { WindowSize, useWindowSize } from './use-window-size-hook';
 
 
 
@@ -18,6 +19,22 @@ function App() {
     1673107200000,
     1673193600000,
     1673280000000]
+
+    const timestampsArray = generateTimestampsArray(1672502400000, 1000000);
+
+    const valuesArray = generateTimestampsArray(10, 1000000)
+
+    function generateTimestampsArray(startTimestamp:number, numberOfTimestamps:number) {
+      const incrementInSeconds = 1;
+      const timestampsArray = [];
+    
+      for (let i = 0; i < numberOfTimestamps; i++) {
+        const currentTimestamp = startTimestamp + i * incrementInSeconds * 1000;
+        timestampsArray.push(currentTimestamp);
+      }
+    
+      return timestampsArray;
+    }
 
     const values = [ 5,
       50,
@@ -44,29 +61,30 @@ function App() {
 
   const [domainLinker] = useState(() => new DomainLinker())
   const {hasHistory, hasFutures} = useDomainHistoryStatus(domainLinker)
+  const windowSize = useWindowSize()
 
     useEffect(() => {
+      console.log(windowSize)
       const lineChart: LineChart = new LineChart("chart");
-      const chartLine: ChartLine = new ChartLine(timestamps,values);
+      const chartLine: ChartLine = new ChartLine(timestampsArray,valuesArray);
       chartLine.color = "#DDDDDD"
-      const chartLine2: ChartLine = new ChartLine(timestamps,valuesTwo);
-      chartLine2.isAutoScale = false;
+      //const chartLine2: ChartLine = new ChartLine(timestamps,valuesTwo);
+      //chartLine2.isAutoScale = false;
       const tooltip = DEFAULT_TOOLTIP
       const brush = new ChartBrush(domainLinker)
       const zoomBrush = new ChartZoomBrush(domainLinker)
       tooltip.positionCallback = (x:number,y:number) => ({x: x +10, y: y +10})
-      chartLine2.color = "#008000"
+      //chartLine2.color = "#008000"
       lineChart
           .addChartLine(chartLine)
-          .addChartLine(chartLine2)
-          .setTooltip(tooltip)
+          //.addChartLine(chartLine2)
+          //.setTooltip(tooltip)
           .setZoom(zoomBrush)
           .draw()
-
       const secondChart = new LineChart("chartTwo");
-      secondChart.addChartLine(chartLine).addChartLine(chartLine2);
+      secondChart.addChartLine(chartLine)//.addChartLine(chartLine2);
       secondChart.setBrush(brush).draw()
-    },[])
+    },[windowSize])
 
     const getTooltipPresentation = (time: number, tooltipData:TooltipData) =>{
       return "<div></div>"
